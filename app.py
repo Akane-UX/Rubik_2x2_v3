@@ -68,7 +68,7 @@ def api_example():
     colors = state_to_colors(held)
     return jsonify({
         "corners": {str(slot): list(c) for slot, c in colors.items()},
-        "scramble_used": " ".join(seq),  # cuma info debug, tdk dipakai logika solve
+        "scramble_used": " ".join(seq),  # cmn info debug, tdk dipakai logika solve
     })
 
 
