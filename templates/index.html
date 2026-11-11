@@ -374,10 +374,7 @@
       plateEls[slot][face] = plate;
     });
 
-    // Sisi DALAM cubie (yg tdk punya stiker) ditutup inti hitam pekat.
-    // Tanpa ini cubie berupa "kulit" berlubang: saat lapisan diputar,
-    // bagian belakang stiker cubie lain terlihat lewat lubang tsb dan
-    // tampak seperti warna yang berubah-ubah.
+    // Inti hitam sisi dalam cubie untuk mencegah tembus pandang
     ["U","D","F","B","L","R"].filter(f => !CORNER_FACES[slot].includes(f)).forEach(face => {
       const core = document.createElement("div");
       core.className = "cubie-core";
@@ -448,20 +445,7 @@
   document.getElementById("nav-up").addEventListener("click", () => { navX += 90; updateCubeNav(); });
 
   // ================================================================
-  // MESIN ANIMASI PUTARAN (DIPERBAIKI)
-  // ================================================================
-  //
-  // Trik animasi yang benar:
-  // Setiap cubie ada di posisi (x*OFFSET, -y*OFFSET, z*OFFSET) relatif terhadap
-  // pusat cube-inner. Untuk memutar sekumpulan cubie mengelilingi sumbu yang lewat
-  // pusat, kita gunakan PIVOT ELEMENT: sebuah div kosong di tengah (0,0,0) yang
-  // dirotasi. Cubie-cubie yang ikut berputar kita pindahkan ke dalam pivot itu
-  // (sebagai child), pivot dirotasi, lalu setelah animasi cubie dikembalikan ke
-  // cube-inner dengan posisi baru (sesuai state berikutnya).
-  //
-  // Cara ini lebih andal dari trick transform-string karena:
-  // 1. Tidak ada ambiguitas urutan transform
-  // 2. Pivot benar-benar di pusat kubus (bukan pusat cubie)
+  // MESIN ANIMASI PUTARAN (Pivot Element di pusat kubus)
   // ================================================================
 
   function animateSlots(slots, cssAxis, angleDeg, durationMs, onDone) {
@@ -475,20 +459,15 @@
     pivot.style.transform = "none";
     cubeInnerEl.appendChild(pivot);
 
-    // Pindahkan cubie ke dalam pivot
-    // Cubie saat ini ada di posisi (x*OFFSET, -y*OFFSET, z*OFFSET) rel. cube-inner
-    // Kita pindahkan ke pivot (yang ada di center cube-inner, yaitu 50%,50%)
-    // tapi karena pivot sendiri punya margin -40px (tidak, pivot punya left:50% top:50% width:0 height:0)
-    // cubie di-translate dari (0,0,0) relatif pivot, jadi transform-nya tetap sama.
+    // Pindahkan cubie ke pivot sementara
     const cubieEls_slots = slots.map(s => cubieEls[s]);
     cubieEls_slots.forEach(el => {
-      // Reset transition & transform ke base (posisi snap)
       el.style.transition = "none";
       el.style.transform = el.dataset.base;
       pivot.appendChild(el);
     });
 
-    // Paksa reflow agar posisi base ter-commit sebelum animasi mulai
+    // Paksa reflow
     void pivot.offsetWidth;
 
     // Set transisi dan target rotasi pada pivot
