@@ -8,12 +8,12 @@
 
 ## 👥 Identitas Kelompok
 
-| No. | Nama Lengkap           |     NIM     | Peran & Kontribusi Utama                                                                              |
-| :-: | :--------------------- | :---------: | :---------------------------------------------------------------------------------------------------- |
-|  1  | *[Nama Mahasiswa 1]* | *[NIM 1]* | Backend Architecture, BFS Solver Engine, & Lehmer Encoding (`solver.py`, `cube_model.py`)         |
-|  2  | *[Nama Mahasiswa 2]* | *[NIM 2]* | Group Theory, 24-Rotation Canonicalization, & Color Parsing (`color_mapping.py`, `movements.py`)  |
-|  3  | *[Nama Mahasiswa 3]* | *[NIM 3]* | Flask REST API Controller & Testing Suite (`app.py`, `test_solver.py`, `test_color_mapping.py`) |
-|  4  | *[Nama Mahasiswa 4]* | *[NIM 4]* | Frontend 3D CSS Engine, Pivot Animation System, & UI/UX Interaction (`templates/index.html`)        |
+| No. | Nama Lengkap           | Peran & Kontribusi Utama                                                                              |
+| :-: | :--------------------- | :---------------------------------------------------------------------------------------------------- |
+|  1  | *[Nama Mahasiswa 1]* | Backend Architecture, BFS Solver Engine, & Lehmer Encoding (`solver.py`, `cube_model.py`)         |
+|  2  | *[Nama Mahasiswa 2]* | Group Theory, 24-Rotation Canonicalization, & Color Parsing (`color_mapping.py`, `movements.py`)  |
+|  3  | *[Nama Mahasiswa 3]* | Flask REST API Controller & Testing Suite (`app.py`, `test_solver.py`, `test_color_mapping.py`) |
+|  4  | *[Nama Mahasiswa 4]* | Frontend 3D CSS Engine, Pivot Animation System, & UI/UX Interaction (`templates/index.html`)        |
 
 ---
 
