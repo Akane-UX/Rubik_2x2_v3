@@ -1,23 +1,4 @@
-"""
-app.py
-=================================================================
-Step 7: Controller (Flask).
-
-Tugasnya SEMPIT dan SENGAJA dibuat begitu, sesuai rencana awal:
-  - Menyajikan halaman (View) di GET /
-  - Menerima input warna dari View, meneruskannya ke Model
-    (color_mapping.colors_to_solution -> solver.py -> movements.py)
-  - Mengembalikan hasilnya (teks solusi) sebagai JSON ke View
-
-Tidak ada logika kubus di file ini sama sekali -- semua logika sudah
-ada & sudah diuji tuntas di Step 1-6 (cube_model, movements, solver,
-color_mapping). File ini murni "jembatan" HTTP.
-
-Cara menjalankan:
-    pip install flask
-    python3 app.py
-lalu buka http://127.0.0.1:5000 di browser.
-"""
+"""Controller web Flask untuk antarmuka Rubik 2x2x2 Solver."""
 
 import random
 
@@ -32,11 +13,13 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
+    """Menyajikan halaman antarmuka web 3D."""
     return render_template("index.html")
 
 
 @app.route("/api/solve", methods=["POST"])
 def api_solve():
+    """Menerima konfigurasi warna dari frontend, memproses solusi, dan mengembalikan JSON."""
     payload = request.get_json(silent=True) or {}
     raw_corners = payload.get("corners")
 
@@ -52,7 +35,7 @@ def api_solve():
         result = colors_to_solution(corners)
     except ColorMappingError as e:
         return jsonify({"error": str(e)}), 400
-    except Exception as e:  # jaring pengaman -- jangan sampai user lihat traceback mentah
+    except Exception as e:
         return jsonify({"error": f"Terjadi kesalahan tak terduga: {e}"}), 500
 
     return jsonify(result)
@@ -60,7 +43,7 @@ def api_solve():
 
 @app.route("/api/example", methods=["GET"])
 def api_example():
-    """Isi contoh: kubus diacak + disimulasikan dipegang pd orientasi acak."""
+    """Menghasilkan acakan kubus acak untuk pengujian instan pada antarmuka."""
     n = random.randint(3, 12)
     seq = [random.choice(ALL_MOVES) for _ in range(n)]
     scrambled = apply_moves(SOLVED_STATE, " ".join(seq))
@@ -68,9 +51,10 @@ def api_example():
     colors = state_to_colors(held)
     return jsonify({
         "corners": {str(slot): list(c) for slot, c in colors.items()},
-        "scramble_used": " ".join(seq),  # cmn info debug, tdk dipakai logika solve
+        "scramble_used": " ".join(seq),
     })
 
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
+
