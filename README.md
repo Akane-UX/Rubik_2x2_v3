@@ -1,4 +1,4 @@
-# Pocket Cube (Rubik 2x2x2) Optimal Solver & Interactive 3D Web Visualizer
+# Pocket Cube (Rubik 2x2x2) Solver
 
 > **Tugas Kelompok Akhir Semester**
 > **Mata Kuliah:** Kecerdasan Buatan / Teori Graf / Desain & Analisis Algoritma
@@ -6,18 +6,7 @@
 
 ---
 
-## 👥 Identitas Kelompok
-
-| No. | Nama Lengkap           | Peran & Kontribusi Utama                                                                              |
-| :-: | :--------------------- | :---------------------------------------------------------------------------------------------------- |
-|  1  | *[Nama Mahasiswa 1]* | Backend Architecture, BFS Solver Engine, & Lehmer Encoding (`solver.py`, `cube_model.py`)         |
-|  2  | *[Nama Mahasiswa 2]* | Group Theory, 24-Rotation Canonicalization, & Color Parsing (`color_mapping.py`, `movements.py`)  |
-|  3  | *[Nama Mahasiswa 3]* | Flask REST API Controller & Testing Suite (`app.py`, `test_solver.py`, `test_color_mapping.py`) |
-|  4  | *[Nama Mahasiswa 4]* | Frontend 3D CSS Engine, Pivot Animation System, & UI/UX Interaction (`templates/index.html`)        |
-
----
-
-## 📑 Daftar Isi
+## Daftar Isi
 
 1. [Latar Belakang &amp; Ringkasan Proyek](#-latar-belakang--ringkasan-proyek)
 2. [Fitur Unggulan Sistem](#-fitur-unggulan-sistem)
@@ -45,7 +34,7 @@
 
 ---
 
-## 📖 Latar Belakang & Ringkasan Proyek
+## Latar Belakang & Ringkasan Proyek
 
 Kubus Rubik 2x2x2 (*Pocket Cube* atau *Mini Cube*) merupakan teka-teki kombinatorial 3D yang hanya terdiri dari **8 buah sudut (corner cubies)** tanpa memiliki bagian tepi (*edges*) maupun pusat muka yang tetap (*fixed centers*). Walaupun terlihat sederhana dibandingkan Rubik 3x3x3, kubus 2x2x2 memiliki **88.179.840** kemungkinan susunan fisik acak.
 
@@ -59,19 +48,19 @@ Tujuan utama dari proyek tugas akhir semester ini adalah merancang dan mengimple
 
 ---
 
-## 🌟 Fitur Unggulan Sistem
+## Fitur Unggulan Sistem
 
-- ⚡ **Penyelesaian Instan & Optimal (God's Number):** Solusi selalu memiliki jumlah gerakan paling sedikit yang mungkin dicapai secara matematis (maksimal 11 gerakan HTM).
-- 🧠 **Kompresi Memori Sangat Efisien (~3.5 MB):** Menggunakan pengkodean permutasi Lehmer Code dan orientasi basis-3, seluruh ruang keadaan 3.674.160 state dipadatkan menjadi berkas biner tabel BFS sebesar 3,5 MB (1 byte per state), menghemat memori dibandingkan tabel berbasis dictionary yang dapat melebihi 1 GB.
-- 🔄 **Orientasi Pegang Bebas (24-Way Auto-Canonicalization):** Pengguna tidak perlu khawatir kubus terbalik saat diinput; algoritma secara otomatis mencari jalur reorientasi kubus utuh yang tepat.
-- 🎨 **Antarmuka 3D Web Modern & Ringan:** Dibuat menggunakan HTML5, CSS 3D Transforms, dan JavaScript murni tanpa pustaka grafis berat.
-- 🎬 **Animasi Step-by-Step Interaktif:** Dilengkapi kontrol langkah "Berikutnya" dan "Sebelumnya" dengan animasi putaran lapisan fisik yang mulus mengitari pusat kubus.
-- 🛡️ **Validasi 7 Lapis Kesalahan Input:** Sistem mendeteksi secara dini kesalahan kombinasi warna yang mustahil secara fisik (misal: warna berlawanan di satu sudut, warna ganda, atau twist ilegal).
-- 🧪 **Pengujian Menyeluruh (55 Unit Tests):** Seluruh modul backend diuji tuntas menggunakan `unittest` dengan tingkat kelulusan 100%.
+- **Penyelesaian Instan & Optimal (God's Number):** Solusi selalu memiliki jumlah gerakan paling sedikit yang mungkin dicapai secara matematis (maksimal 11 gerakan HTM).
+- **Kompresi Memori Sangat Efisien (~3.5 MB):** Menggunakan pengkodean permutasi Lehmer Code dan orientasi basis-3, seluruh ruang keadaan 3.674.160 state dipadatkan menjadi berkas biner tabel BFS sebesar 3,5 MB (1 byte per state), menghemat memori dibandingkan tabel berbasis dictionary yang dapat melebihi 1 GB.
+- **Orientasi Pegang Bebas (24-Way Auto-Canonicalization):** Pengguna tidak perlu khawatir kubus terbalik saat diinput; algoritma secara otomatis mencari jalur reorientasi kubus utuh yang tepat.
+- **Antarmuka 3D Web Modern & Ringan:** Dibuat menggunakan HTML5, CSS 3D Transforms, dan JavaScript murni tanpa library grafis berat.
+- **Animasi Step-by-Step Interaktif:** Dilengkapi kontrol langkah "Berikutnya" dan "Sebelumnya" dengan animasi putaran lapisan fisik yang mulus mengitari pusat kubus.
+- **Validasi 7 Lapis Kesalahan Input:** Sistem mendeteksi secara dini kesalahan kombinasi warna yang mustahil secara fisik (misal: warna berlawanan di satu sudut, warna ganda, atau twist ilegal).
+- **Pengujian Menyeluruh (55 Unit Tests):** Seluruh modul backend diuji tuntas menggunakan `unittest` dengan tingkat kelulusan 100%.
 
 ---
 
-## 🏗️ Arsitektur Sistem & Alur Kerja
+## Arsitektur Sistem & Alur Kerja
 
 Sistem dibangun dengan arsitektur modular yang memisahkan model data, matematika gerakan, engine pencarian BFS, pipeline pengenalan warna, pengontrol HTTP Flask, dan visualizer web 3D.
 
@@ -134,7 +123,7 @@ sequenceDiagram
 
 ---
 
-## 📁 Struktur Direktori Proyek
+## Struktur Direktori Proyek
 
 ```text
 Rubik_2x2/
@@ -158,7 +147,7 @@ Rubik_2x2/
 
 ---
 
-## 🧩 Pemetaan Fungsi & Kode Lengkap (Code Map)
+## Pemetaan Fungsi & Kode Lengkap (Code Map)
 
 Bagian ini merinci fungsi, kelas, konstanta, dan letak baris dari setiap komponen kode pada proyek ini.
 
@@ -287,7 +276,7 @@ Berkas tunggal ini mencakup struktur HTML5, styling CSS modern dengan ruang 3D, 
 
 ---
 
-## 🔬 Landasan Teori & Algoritma Matematis
+## Landasan Teori & Algoritma Matematis
 
 ### 1. Reduksi Ruang Keadaan (State Space Reduction)
 
@@ -475,7 +464,7 @@ Untuk menyelesaikan masalah ini, dirancang pola **Pivot Element**:
 
 ---
 
-## 🚀 Panduan Instalasi & Menjalankan Proyek
+## Panduan Instalasi & Menjalankan Proyek
 
 ### Prasyarat Sistem
 
@@ -535,7 +524,7 @@ http://127.0.0.1:5000
 
 ---
 
-## 🧪 Panduan Menjalankan Pengujian (Unit Tests)
+## Panduan Menjalankan Pengujian (Unit Tests)
 
 Seluruh logika matematika, representasi data, pencarian BFS, dan kanonikalisasi telah dilengkapi dengan pengujian komprehensif.
 
@@ -565,7 +554,7 @@ OK
 
 ---
 
-## 🎮 Panduan Penggunaan Aplikasi (User Manual)
+## Panduan Penggunaan Aplikasi (User Manual)
 
 Antarmuka web dirancang agar mudah digunakan bahkan oleh orang yang belum pernah bermain Rubik sebelumnya.
 
@@ -606,7 +595,7 @@ Klik tombol **"Reset"** untuk mengosongkan stiker kubus dan kembali ke mode inpu
 
 ---
 
-## 🛠️ Dokumentasi Perbaikan Bug & Edge Cases
+## Dokumentasi Perbaikan Bug & Edge Cases
 
 Selama proses pengembangan sistem, sejumlah tantangan teknis diselesaikan dan didokumentasikan sebagai bagian dari pembelajaran rekayasa perangkat lunak:
 
@@ -642,7 +631,7 @@ Selama proses pengembangan sistem, sejumlah tantangan teknis diselesaikan dan di
 
 ---
 
-## 📌 Kesimpulan
+## Kesimpulan
 
 Proyek **Pocket Cube (Rubik 2x2x2) Solver** ini berhasil mengintegrasikan teori matematika murni (aljabar abstrak, teori grup, dan teori graf) dengan rekayasa perangkat lunak modern (Python Flask, kompresi memori, dan visualisasi web 3D). Melalui pemanfaatan reduksi simetri ruang keadaan dan pengkodean Lehmer Code, sistem ini mampu membuktikan secara empiris dan komputasional konsep **God's Number ($\le 11$ gerakan)** serta menyajikannya dalam antarmuka web interaktif yang edukatif, efisien, dan andal.
 
