@@ -326,6 +326,9 @@
   let renderGen = 0; // guard thd callback animasi basi setelah Reset
 
   let navX = 0, navY = 0;
+  const API_BASE = (window.location.protocol === "file:" || (window.location.port && window.location.port !== "5000"))
+    ? "http://127.0.0.1:5000"
+    : "";
 
   // ================================================================
   // BANGUN PALET
@@ -598,12 +601,17 @@
   });
 
   document.getElementById("btn-example").addEventListener("click", async () => {
-    const res = await fetch("/api/example");
-    const data = await res.json();
-    for (let s = 0; s < 8; s++) selections[s] = data.corners[String(s)];
-    renderCubeFromCorners(selections);
-    updateProgress();
-    enterInputMode();
+    try {
+      const res = await fetch(`${API_BASE}/api/example`);
+      if (!res.ok) throw new Error("Server error");
+      const data = await res.json();
+      for (let s = 0; s < 8; s++) selections[s] = data.corners[String(s)];
+      renderCubeFromCorners(selections);
+      updateProgress();
+      enterInputMode();
+    } catch (err) {
+      showResult("error", "<p>Tidak bisa terhubung ke server. Pastikan app.py sedang berjalan.</p>");
+    }
   });
 
   // ================================================================
@@ -634,7 +642,7 @@
         cornersPayload[String(s)] = selections[s];
       }
 
-      const res = await fetch("/api/solve", {
+      const res = await fetch(`${API_BASE}/api/solve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ corners: cornersPayload }),

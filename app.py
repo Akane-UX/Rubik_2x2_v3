@@ -11,15 +11,26 @@ from movements import ALL_MOVES, apply_moves
 app = Flask(__name__)
 
 
+@app.after_request
+def add_cors_headers(response):
+    """Izinkan akses lintas origin (CORS) saat frontend dibuka via Live Server atau file lokal."""
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return response
+
+
 @app.route("/")
 def index():
     """Menyajikan halaman antarmuka web 3D."""
     return render_template("index.html")
 
 
-@app.route("/api/solve", methods=["POST"])
+@app.route("/api/solve", methods=["POST", "OPTIONS"])
 def api_solve():
     """Menerima konfigurasi warna dari frontend, memproses solusi, dan mengembalikan JSON."""
+    if request.method == "OPTIONS":
+        return "", 204
     payload = request.get_json(silent=True) or {}
     raw_corners = payload.get("corners")
 
