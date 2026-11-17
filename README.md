@@ -1,7 +1,7 @@
 # Pocket Cube (Rubik 2x2x2) Solver
 
 > **Tugas Kelompok Akhir Semester**
-> **Mata Kuliah:** Kecerdasan Buatan / Teori Graf / Desain & Analisis Algoritma
+> **Mata Kuliah:** Artificial Intillegence Concepts
 > **Aplikasi:** Sistem Pemecah Kubus Rubik 2x2x2 Berbasis *Breadth-First Search* (BFS), *Lehmer Code Encoding*, dan Visualisasi Interaktif Web 3D (Flask + Modern CSS 3D Transforms).
 
 ---
@@ -55,7 +55,7 @@ Tujuan utama dari proyek tugas akhir semester ini adalah merancang dan mengimple
 - **Orientasi Pegang Bebas (24-Way Auto-Canonicalization):** Pengguna tidak perlu khawatir kubus terbalik saat diinput; algoritma secara otomatis mencari jalur reorientasi kubus utuh yang tepat.
 - **Antarmuka 3D Web Modern & Ringan:** Dibuat menggunakan HTML5, CSS 3D Transforms, dan JavaScript murni tanpa library grafis berat.
 - **Animasi Step-by-Step Interaktif:** Dilengkapi kontrol langkah "Berikutnya" dan "Sebelumnya" dengan animasi putaran lapisan fisik yang mulus mengitari pusat kubus.
-- **Validasi 7 Lapis Kesalahan Input:** Sistem mendeteksi secara dini kesalahan kombinasi warna yang mustahil secara fisik (misal: warna berlawanan di satu sudut, warna ganda, atau twist ilegal).
+- **Validasi 7 Lapis Kesalahan Input:** Sistem mendeteksi secara dini kesalahan kombinasi warna yang mustahil secara fisik (misal: warna berlawanan di satu sudut, warna ganda, atau corner twist).
 - **Pengujian Menyeluruh (55 Unit Tests):** Seluruh modul backend diuji tuntas menggunakan `unittest` dengan tingkat kelulusan 100%.
 
 ---
