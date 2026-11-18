@@ -1,6 +1,6 @@
 """Konversi input warna pengguna ke CubeState kanonik dan orkestrasi pipeline solusi."""
 
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from cube_model import (
     CORNER_FACES,
@@ -109,7 +109,10 @@ def validate_raw_input(
 
 def _canonical_orders(color_scheme: Dict[str, str]) -> Dict[int, Tuple[str, str, str]]:
     """Daftar urutan kanonik warna stiker tiap corner."""
-    return {i: tuple(color_scheme[f] for f in CORNER_FACES[i]) for i in range(8)}
+    return {
+        i: (color_scheme[f0], color_scheme[f1], color_scheme[f2])
+        for i, (f0, f1, f2) in CORNER_FACES.items()
+    }
 
 
 def _identify_corner(
@@ -136,8 +139,8 @@ def raw_state_from_colors(
     validate_raw_input(corners, color_scheme)
     canon = _canonical_orders(color_scheme)
 
-    perm: List[Optional[int]] = [None] * 8
-    orient: List[Optional[int]] = [None] * 8
+    perm: List[int] = [0] * 8
+    orient: List[int] = [0] * 8
     for slot, colors in corners.items():
         cid, o = _identify_corner(colors, canon)
         perm[slot] = cid
@@ -218,8 +221,8 @@ ROTATION_GENERATOR = {"x": _rot_x, "y": _rot_y}
 
 def apply_rotation(state: CubeState, rot_fn) -> CubeState:
     """Terapkan satu rotasi bodi kubus utuh pada state."""
-    new_perm: List[Optional[int]] = [None] * 8
-    new_orient: List[Optional[int]] = [None] * 8
+    new_perm: List[int] = [0] * 8
+    new_orient: List[int] = [0] * 8
 
     for old_slot in range(8):
         new_slot = COORD_TO_SLOT[rot_fn(CORNER_COORD[old_slot])]
@@ -272,7 +275,7 @@ def _states_to_json_colors(states: List[CubeState], color_scheme) -> List[Dict[s
 def colors_to_solution(
     corners: Dict[int, Tuple[str, str, str]],
     color_scheme: Dict[str, str] = DEFAULT_FACE_COLORS,
-) -> Dict[str, object]:
+) -> Dict[str, Any]:
     """Pipeline terpadu: validasi, normalisasi kanonik, pencarian solusi BFS, dan pembuatan frame animasi."""
     raw_state = raw_state_from_colors(corners, color_scheme)
 
@@ -286,7 +289,7 @@ def colors_to_solution(
             "states": _states_to_json_colors([raw_state], color_scheme),
         }
 
-    canonical_state, orig_slot, orig_orient, rotation_path = canonicalize(raw_state)
+    canonical_state, _, _, rotation_path = canonicalize(raw_state)
     moves = bfs_solve(canonical_state)
 
     # Langkah reorientasi seluruh kubus jika diperlukan

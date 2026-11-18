@@ -18,7 +18,7 @@
    - [solver.py](#3-solverpy--engine-bfs-lehmer-code-dan-tabel-lookup)
    - [color_mapping.py](#4-color_mappingpy--pipeline-warna-dan-kanonikalisasi-24-rotasi)
    - [app.py](#5-apppy--web-controller-flask-rest-api)
-   - [templates/index.html](#6-templatesindexhtml--antarmuka-dan-mesin-animasi-3d-css)
+   - [Frontend Web (templates/index.html &amp; static/)](#6-frontend-web-templatesindexhtml-staticcss-staticjs--antarmuka-dan-mesin-animasi-3d-css)
    - [test_solver.py &amp; test_color_mapping.py](#7-test_solverpy--test_color_mappingpy--unit-testing-suite)
 6. [Landasan Teori &amp; Algoritma Matematis](#-landasan-teori--algoritma-matematis)
    - [1. Reduksi Ruang Keadaan (State Space Reduction)](#1-reduksi-ruang-keadaan-state-space-reduction)
@@ -26,7 +26,7 @@
    - [3. Pencarian Jalur Optimal via BFS (God&#39;s Number)](#3-pencarian-jalur-optimal-via-bfs-gods-number)
    - [4. Teori Grup: 24 Rotasi Bodi Kaku (Chiral Octahedral Group)](#4-teori-grup-24-rotasi-bodi-kaku-chiral-octahedral-group)
    - [5. Konvensi Kociemba &amp; Rumus Orientasi Stiker](#5-konvensi-kociemba--rumus-orientasi-stiker)
-   - [6. Solusi Mekanika Animasi 3D CSS: Pola Pivot Element](#6-solusi-mekanika-animasi-3d-css-pola-pivot-element)
+   - [6. Mekanika Animasi 3D CSS: Transformasi In-Place Tanpa Reparenting DOM](#6-mekanika-animasi-3d-css-transformasi-in-place-tanpa-reparenting-dom)
 7. [Panduan Instalasi &amp; Menjalankan Proyek](#-panduan-instalasi--menjalankan-proyek)
 8. [Panduan Penggunaan Aplikasi (User Manual)](#-panduan-penggunaan-aplikasi-user-manual)
 9. [Dokumentasi Perbaikan Bug &amp; Edge Cases](#-dokumentasi-perbaikan-bug--edge-cases)
@@ -44,7 +44,7 @@ Tujuan utama dari proyek tugas akhir semester ini adalah merancang dan mengimple
 2. **Memvalidasi integritas fisik kubus** secara matematis (mencegah kondisi kubus ilegal akibat stiker tertukar atau kesalahan bongkar-pasang).
 3. **Melakukan kanonikalisasi orientasi spasial** kubus menggunakan representasi grup rotasi oktahedral ($O \cong S_4$) sehingga pengguna bebas memegang kubus dalam sudut mana pun saat input.
 4. **Menemukan solusi langkah terpendek yang dijamin optimal (God's Algorithm)** dengan jumlah putaran maksimum $\le 11$ gerakan (*Half-Turn Metric* / HTM) secara instan ($< 1$ milidetik) melalui tabel *precomputed lookup* berbasis *Breadth-First Search* (BFS) dan *Lehmer Code*.
-5. **Memvisualisasikan solusi langkah demi langkah secara nyata dalam ruang 3D** menggunakan animasi layer berbasis *CSS 3D Transforms* dengan sistem *Pivot Element* yang presisi tanpa ketergantungan library eksternal (seperti Three.js).
+5. **Memvisualisasikan solusi langkah demi langkah secara nyata dalam ruang 3D** menggunakan animasi layer berbasis *CSS 3D Transforms* secara *in-place* mengelilingi pusat kubus tanpa ketergantungan library eksternal (seperti Three.js).
 
 ---
 
@@ -53,7 +53,7 @@ Tujuan utama dari proyek tugas akhir semester ini adalah merancang dan mengimple
 - **Penyelesaian Instan & Optimal (God's Number):** Solusi selalu memiliki jumlah gerakan paling sedikit yang mungkin dicapai secara matematis (maksimal 11 gerakan HTM).
 - **Kompresi Memori Sangat Efisien (~3.5 MB):** Menggunakan pengkodean permutasi Lehmer Code dan orientasi basis-3, seluruh ruang keadaan 3.674.160 state dipadatkan menjadi berkas biner tabel BFS sebesar 3,5 MB (1 byte per state), menghemat memori dibandingkan tabel berbasis dictionary yang dapat melebihi 1 GB.
 - **Orientasi Pegang Bebas (24-Way Auto-Canonicalization):** Pengguna tidak perlu khawatir kubus terbalik saat diinput; algoritma secara otomatis mencari jalur reorientasi kubus utuh yang tepat.
-- **Antarmuka 3D Web Modern & Ringan:** Dibuat menggunakan HTML5, CSS 3D Transforms, dan JavaScript murni tanpa library grafis berat.
+- **Antarmuka 3D Web Modern & Ringan:** Dibuat menggunakan HTML5, CSS 3D Transforms, dan JavaScript modular dengan tata letak *Bento Grid*, rotasi kamera bebas via *drag* kursor, serta indeks kuota warna dinamis (`4 -> 0`) tanpa library grafis berat.
 - **Animasi Step-by-Step Interaktif:** Dilengkapi kontrol langkah "Berikutnya" dan "Sebelumnya" dengan animasi putaran lapisan fisik yang mulus mengitari pusat kubus.
 - **Validasi 7 Lapis Kesalahan Input:** Sistem mendeteksi secara dini kesalahan kombinasi warna yang mustahil secara fisik (misal: warna berlawanan di satu sudut, warna ganda, atau corner twist).
 - **Pengujian Menyeluruh (55 Unit Tests):** Seluruh modul backend diuji tuntas menggunakan `unittest` dengan tingkat kelulusan 100%.
@@ -116,7 +116,7 @@ sequenceDiagram
     FE->>FE: buildFrames() & inisialisasi state render
     loop Setiap klik "Berikutnya"
         U->>FE: Klik "Berikutnya"
-        FE->>FE: animateTransition() via Pivot Element
+        FE->>FE: animateTransition() (In-Place CSS 3D)
         FE->>U: Animasi rotasi fisik 3D tampil di layar
     end
 ```
@@ -134,11 +134,26 @@ Rubik_2x2/
 ├── color_mapping.py           # Pipeline konversi warna, grup 24 rotasi, & kanonikalisasi
 ├── bfs_table.bin              # Tabel lookup BFS terkompresi 1-byte per state (~3.5 MB)
 ├── templates/
-│   └── index.html             # Tampilan antarmuka web lengkap + CSS 3D + JS Animasi
+│   └── index.html             # Struktur markup HTML antarmuka web (Bento Grid)
+├── static/
+│   ├── css/
+│   │   └── style.css          # Styling tema dark-obsidian, ruang 3D, & transisi
+│   └── js/
+│       ├── api.js             # Request HTTP ke endpoint /api/example & /api/solve
+│       ├── camera.js          # Kontrol sudut pandang 3D via drag kursor & tombol
+│       ├── config.js          # Konstanta geometri, warna, sudut putaran, & API_BASE
+│       ├── cube.js            # Konstruksi kubus 3D, pewarnaan, & animasi in-place
+│       ├── main.js            # Event handler tombol aksi & inisialisasi aplikasi
+│       ├── palette.js         # Palet warna dengan indeks sisa kuota (4 -> 0)
+│       ├── state.js           # State global aplikasi & helper kuota warna
+│       └── steps.js           # Penyusunan frame solusi, label, & navigasi langkah
 ├── test_solver.py             # Unit test model kubus, gerakan, dan pencarian BFS
 ├── test_color_mapping.py      # Unit test grup rotasi 24, pemetaan warna, & pipeline
 ├── docs/                      # Laporan dokumentasi perbaikan internal
-│   └── 2026-10-04_color_jump_bugfix.md
+│   ├── 2026-10-04_color_jump_bugfix.md
+│   ├── 2026-11-17_flicker_fix_and_code_split.md
+│   ├── 2026-11-17_frontend_backend_connection_fix.md
+│   └── 2026-11-17_frontend_ui_ux_promax_redesign.md
 ├── PERBAIKAN.md               # Catatan detail perbaikan bug historis
 ├── ref/                       # Berkas referensi multimedia
 │   └── cube.mp4
@@ -238,32 +253,31 @@ Berkas ini bertugas menjembatani dunia nyata (warna stiker yang dilihat pengguna
 
 Berkas ini merupakan pengendali HTTP yang menghubungkan antarmuka browser dengan engine komputasi Python.
 
-| Route / Fungsi    |        Metode        | Penjelasan & Peran dalam Sistem                                                                                                                                  |
-| :---------------- | :------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index()`       |      `GET /`      | Merender dan menyajikan halaman web visualizer (`templates/index.html`).                                                                                       |
-| `api_solve()`   | `POST /api/solve` | Endpoint API untuk menerima payload JSON berisi 24 warna stiker sudut, memanggil `colors_to_solution()`, dan mengembalikan solusi langkah serta frame animasi. |
-| `api_example()` | `GET /api/example` | Endpoint API untuk menghasilkan acakan kubus acak yang dijamin valid secara fisik dan disimulasikan dipegang pada orientasi acak.                                |
+| Route / Fungsi          |           Metode           | Penjelasan & Peran dalam Sistem                                                                                                                                      |
+| :---------------------- | :------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add_cors_headers()`    | `@app.after_request`       | Menyertakan header CORS (`Access-Control-Allow-Origin: *`, `Access-Control-Allow-Headers: Content-Type`, `Access-Control-Allow-Methods: GET, POST, OPTIONS`) agar frontend tetap terhubung saat dibuka via Live Server atau `file://`. |
+| `index()`               |          `GET /`           | Merender dan menyajikan halaman web visualizer (`templates/index.html`).                                                                                             |
+| `api_solve()`           | `POST / OPTIONS /api/solve` | Endpoint API untuk menangani preflight `OPTIONS` serta menerima payload JSON berisi 24 warna stiker sudut, memanggil `colors_to_solution()`, dan mengembalikan solusi langkah serta frame animasi. |
+| `api_example()`         |      `GET /api/example`    | Endpoint API untuk menghasilkan acakan kubus acak yang dijamin valid secara fisik dan disimulasikan dipegang pada orientasi acak.                                    |
 
 ---
 
-### 6. `templates/index.html` — Antarmuka dan Mesin Animasi 3D CSS
+### 6. Frontend Web (`templates/index.html`, `static/css/`, `static/js/`) — Antarmuka dan Mesin Animasi 3D CSS
 
-Berkas tunggal ini mencakup struktur HTML5, styling CSS modern dengan ruang 3D, dan logika JavaScript interaktif.
+Antarmuka web dipisahkan secara modular menjadi berkas markup HTML, stylesheet CSS, dan delapan modul JavaScript tanpa ketergantungan framework eksternal.
 
-| Bagian / Komponen              |    Tipe    | Penjelasan & Peran dalam Sistem                                                                                                                                                             |
-| :----------------------------- | :--------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `.scene` & `.cube-outer`   |   CSS 3D   | Menentukan perspektif visual (`perspective: 1100px`) dan sudut pandang isometrik awal kubus (`rotateX(-24deg) rotateY(-35deg)`).                                                        |
-| `.cube-nav`                  |   CSS 3D   | Elemen pembungkus untuk navigasi kamera pengguna (memungkinkan melihat sisi belakang/bawah kubus).                                                                                          |
-| `.cube-inner`                |   CSS 3D   | Poros ruang kubus tempat ke-8 cubie berada.                                                                                                                                                 |
-| `.cubie` & `.cubie-face`   |   CSS 3D   | Elemen fisik cubie dan plat stiker yang dapat diklik untuk memilih warna.                                                                                                                   |
-| `.cubie-core`                |   CSS 3D   | Plat inti hitam pada 3 sisi bagian dalam cubie untuk mencegah tembus pandang saat lapisan terbuka/berputar.                                                                                 |
-| `.layer-pivot`               |   CSS 3D   | Elemen pivot dinamis berukuran $0 \times 0$ di titik $(0,0,0)$ yang digunakan oleh mesin animasi untuk memutar cubie mengelilingi pusat kubus.                                          |
-| `copySelections()`           | JavaScript | Melakukan *deep copy* independen terhadap array seleksi warna stiker untuk mencegah *shallow copy reference mutation*.                                                                  |
-| `cornerColorsFromStateObj()` | JavaScript | Menyalin objek state warna dari backend tanpa berbagi referensi memori.                                                                                                                     |
-| `animateSlots()`             | JavaScript | Inti mesin animasi: memindahkan cubie target ke dalam `.layer-pivot`, menganimasikan rotasi pivot dengan transisi CSS, lalu mengembalikan cubie ke `.cube-inner` dengan posisi barunya. |
-| `animateTransition()`        | JavaScript | Menentukan sumbu dan arah sudut animasi berdasarkan tipe transisi (reorientasi seluruh bodi atau putaran layer U, R, F).                                                                    |
-| `buildFrames()`              | JavaScript | Membangun urutan frame lengkap (frame 0 = input asli, frame reorientasi jika ada, diikuti frame untuk setiap gerakan solusi).                                                               |
-| `goToFrame()`                | JavaScript | Mengatur navigasi langkah ("Berikutnya" / "Sebelumnya") dengan perlindungan terhadap *race conditions* menggunakan `renderGen`.                                                         |
+| Berkas / Komponen                     |    Tipe    | Penjelasan & Peran dalam Sistem                                                                                                                                                              |
+| :------------------------------------ | :--------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `templates/index.html`                |   HTML5    | Struktur markup tata letak *Bento Grid* 2 kolom (viewport 3D di kiri; panel indeks warna, kontrol solver, dan urutan langkah di kanan) serta memuat seluruh modul aset dari `../static/`.    |
+| `static/css/style.css`                |   CSS 3D   | Mengatur tema dark-obsidian bertingkat, perspektif ruang 3D (`.scene`, `.cube-outer`, `.cube-nav`, `.cube-inner`), komponen `.cubie`, `.cubie-face`, `.cubie-core`, serta kurva transisi `--spring`, `--bounce`, dan `--turn`. |
+| `static/js/config.js`                 | JavaScript | Mendefinisikan konstanta geometri 3D (`CORNER_COORD`, `CORNER_FACES`, `FACE_LOCAL_TRANSFORM`), warna (`COLORS`, `MAX_PER_COLOR`), sumbu/sudut putaran (`LAYER_SLOTS`, `LAYER_AXIS`, `BASE_ANGLE`, `REORIENT_AXIS_ANGLE`), dan deteksi otomatis `API_BASE`. |
+| `static/js/state.js`                  | JavaScript | Mengelola objek `state` global serta helper `clearSelections()`, `copyCorners()`, `getUsedCounts()`, dan `firstAvailableColor()` untuk melacak seleksi dan kuota warna.                   |
+| `static/js/palette.js`                | JavaScript | Membangun panel palet (`buildPalette()`) dan memperbarui indikator sisa kuota `4 -> 0` serta *progress bar* (`updatePaletteUI()`, `setPaletteEnabled()`).                                    |
+| `static/js/cube.js`                   | JavaScript | Membuat elemen cubie 3D (`buildCube()`), merender warna stiker (`renderCube()`, `onPlateClick()`, `onPlateClear()`), dan menjalankan animasi putaran *in-place* (`animateSlots()`, `animateTransition()`, `resetCubieTransforms()`). |
+| `static/js/camera.js`                 | JavaScript | Mengatur rotasi sudut pandang kamera 3D bebas melalui *pointer drag* kursor dan tombol navigasi (`initCamera()`, `applyCamera()`, `normDeg()`).                                              |
+| `static/js/steps.js`                  | JavaScript | Menyusun urutan frame solusi (`buildFrames()`), memformat label instruksi bahasa Indonesia (`describeMove()`, `labelFor()`), dan menavigasi langkah dengan proteksi *race condition* `renderGen` (`goToFrame()`). |
+| `static/js/api.js`                    | JavaScript | Mengirim permintaan HTTP ke backend (`/api/example` melalui `fetchExample()` dan `/api/solve` melalui `requestSolve()`).                                                                    |
+| `static/js/main.js`                   | JavaScript | Mengatur transisi mode input/preview (`enterInputMode()`, `enterPreviewMode()`), handler aksi tombol (`onReset()`, `onExample()`, `onSolve()`), dan inisialisasi aplikasi.                  |
 
 ---
 
@@ -430,37 +444,32 @@ Formula ini menyelesaikan masalah klasik *color jump* di mana warna stiker tampa
 
 ---
 
-### 6. Solusi Mekanika Animasi 3D CSS: Pola Pivot Element
+### 6. Mekanika Animasi 3D CSS: Transformasi In-Place Tanpa Reparenting DOM
 
-Pada implementasi grafis 3D web tanpa menggunakan canvas WebGL/Three.js, setiap cubie diposisikan dalam ruang koordinat menggunakan CSS transform:
+Pada implementasi grafis 3D web tanpa menggunakan canvas WebGL/Three.js, setiap cubie diposisikan dalam ruang koordinat menggunakan CSS transform dasar (`el.dataset.base`):
 
 ```css
 transform: translate3d(x * OFFSET, -y * OFFSET, z * OFFSET);
 ```
 
-#### Masalah Evaluasi Transform String CSS
+#### Kendala Pendekatan Reparenting DOM (`.layer-pivot`)
 
-Jika kita mencoba memutar lapisan kubus dengan menggabungkan string transform:
+Sebelumnya, animasi putaran lapisan menggunakan elemen pembungkus sementara `.layer-pivot` di pusat kubus $(0,0,0)$ dengan memindahkan empat cubie target ke dalamnya lalu mengembalikannya ke `.cube-inner` setelah animasi selesai. Pendekatan *reparenting DOM* tersebut memicu browser merender ulang layer 3D sesaat dan, ketika digabungkan dengan `transition: background-color 0.15s` pada `.cubie-face`, menimbulkan efek kedip warna (*color flicker*) di akhir setiap langkah.
 
-```js
-// KODE LAMA BERMASALAH:
-el.style.transform = `rotateY(90deg) ${el.dataset.base}`;
-```
+#### Solusi Arsitektur: Rotasi In-Place Berbasis Urutan Matriks CSS
 
-Dalam spesifikasi CSS, operasi matriks transform dievaluasi **dari kanan ke kiri**. Akibatnya, elemen cubie pertama-tama di-translate ke posisinya di pojok, lalu dirotasikan terhadap titik lokal cubie itu sendiri. Hasilnya, cubie melompat keluar dari kubus dan terbang pada poros yang salah.
+Untuk menghilangkan kedip warna tanpa mengorbankan presisi poros rotasi, `animateSlots()` di `static/js/cube.js` memutar setiap cubie secara langsung di tempat (*in-place*):
 
-#### Solusi Arsitektur: Pivot Element Pattern
-
-Untuk menyelesaikan masalah ini, dirancang pola **Pivot Element**:
-
-1. Sebuah elemen pembungkus sementara (`div.layer-pivot`) dibuat tepat di tengah kubus dengan ukuran $0 \times 0$ pada posisi `left: 50%; top: 50%`.
-2. Empat cubie yang termasuk dalam lapisan yang akan diputar dipindahkan sementara dari `.cube-inner` menjadi *child node* dari `.layer-pivot`.
-3. Elemen pivot kemudian dirotasikan secara mulus menggunakan CSS Transition:
-   ```css
-   pivot.style.transform = `rotateY(-90deg)`;
+1. Sebelum transisi dimulai, transformasi diinisialisasi tanpa animasi dengan menempatkan rotasi $0^\circ$ di sisi kiri `dataset.base`:
+   ```js
+   el.style.transform = `rotate${axis}(0deg) ${el.dataset.base}`;
    ```
-4. Karena pivot berada tepat di pusat koordinat kubus $(0,0,0)$, seluruh cubie di dalamnya berputar secara presisi mengelilingi sumbu pusat kubus.
-5. Setelah animasi selesai, cubie dikembalikan ke `.cube-inner`, posisinya di-*snap* ke koordinat baru, dan warna stiker diperbarui sesuai state berikutnya.
+2. Setelah *reflow* (`void cubeInnerEl.offsetWidth`), sudut rotasi target diterapkan dengan transisi CSS:
+   ```js
+   el.style.transform = `rotate${axis}(${angle}deg) ${el.dataset.base}`;
+   ```
+3. Dalam spesifikasi CSS, transformasi dievaluasi **dari kanan ke kiri**. Karena `translate3d(...)` berada di kanan dan `rotate(...)` berada di kiri, cubie terlebih dahulu diposisikan ke sudutnya lalu dirotasikan terhadap titik pusat kubus $(0,0,0)$, bukan terhadap titik lokal cubie.
+4. Akhir animasi dideteksi melalui event `transitionend` (dengan fallback `setTimeout`), kemudian transformasi dikembalikan ke `el.dataset.base` dan pewarnaan frame berikutnya diterapkan pada frame yang sama tanpa transisi `background-color`.
 
 ---
 
@@ -564,13 +573,13 @@ Terdapat dua cara untuk memasukkan kondisi acak kubus:
 
 - **Cara A: Memasukkan Warna Manual Sesuai Kubus Nyata**
 
-  1. Klik salah satu tombol warna pada **Palet Warna** di bagian atas (Putih, Kuning, Hijau, Biru, Oranye, Merah).
-  2. Klik stiker pada model kubus 3D untuk mewarnainya.
-  3. Gunakan tombol panah navigasi **Panah Kiri (←)**, **Panah Kanan (→)**, dan **Panah Atas (↑)** untuk memutar sudut pandang kamera kubus sehingga Anda dapat menjangkau seluruh 6 sisi (total 24 stiker).
-  4. Perhatikan indikator di bawah kubus: `24/24 stiker terisi`.
+  1. Klik salah satu tombol warna pada panel **Indeks Warna Stiker** (Putih, Kuning, Hijau, Biru, Oranye, Merah). Setiap warna memiliki kuota maksimal 4 stiker (`4 -> 0`) dan otomatis berpindah ke warna berikutnya yang tersedia saat kuota habis.
+  2. Klik stiker pada model kubus 3D untuk mewarnainya, atau **klik kanan** pada stiker untuk menghapus warnanya.
+  3. Seret (*drag*) kursor langsung pada area kubus 3D atau gunakan tombol navigasi **Kiri (←)**, **Atas (↑)**, **Bawah (↓)**, **Kanan (→)**, dan **Reset Sudut** untuk melihat seluruh 6 sisi (total 24 stiker).
+  4. Perhatikan indikator pada panel warna: `24 / 24 terisi`.
 - **Cara B: Mengisi Contoh Acak Otomatis (Instan)**
 
-  1. Klik tombol **"Isi Contoh Acak"**.
+  1. Klik tombol **"Contoh Acak"**.
   2. Sistem akan menghasilkan konfigurasi acak yang dijamin valid secara fisik dan langsung merendernya pada kubus 3D.
 
 ### 2. Memulai Pencarian Solusi
@@ -603,13 +612,13 @@ Selama proses pengembangan sistem, sejumlah tantangan teknis diselesaikan dan di
 
 - **Gejala:** Saat berpindah langkah animasi, warna kubus pada frame awal berubah secara tidak terduga setelah tombol reset ditekan.
 - **Penyebab:** Penggunaan *spread operator* `{ ...selections }` hanya menyalin objek tingkat pertama, sementara *array* 3 warna di dalamnya tetap berbagi referensi memori yang sama.
-- **Solusi:** Diimplementasikan fungsi `copySelections()` dan `cornerColorsFromStateObj()` yang melakukan *deep clone* rekursif pada setiap array warna per slot sudut.
+- **Solusi:** Diimplementasikan fungsi `copyCorners()` di `static/js/state.js` yang melakukan *deep clone* independen pada setiap array warna per slot sudut.
 
 ### 2. Masalah Anomali Poros Animasi CSS 3D
 
-- **Gejala:** Cubie terlempar keluar kubus (*flying cubie bug*) saat lapisan berputar.
-- **Penyebab:** Urutan evaluasi transformasi CSS mengevaluasi translasi terlebih dahulu sebelum rotasi sudut lokal cubie.
-- **Solusi:** Diterapkan arsitektur **Pivot Element** (`.layer-pivot`) di pusat kubus $(0,0,0)$ sebagai kontainer dinamis selama proses transisi.
+- **Gejala:** Cubie berputar pada poros lokalnya sendiri atau tampak terlempar saat transformasi tidak dirangkai dengan urutan yang tepat.
+- **Penyebab:** Kesalahan urutan evaluasi matriks transformasi CSS (kanan ke kiri) antara translasi posisi sudut dan rotasi sumbu.
+- **Solusi:** Diterapkan penyusunan string transform `rotate${axis}(${angle}deg) ${el.dataset.base}` secara *in-place* di `static/js/cube.js` agar translasi dievaluasi lebih dulu lalu diputar mengelilingi pusat kubus $(0,0,0)$ tanpa memindahkan elemen DOM.
 
 ### 3. Masalah Sinkronisasi Arah Sumbu Reorientasi
 
@@ -628,6 +637,18 @@ Selama proses pengembangan sistem, sejumlah tantangan teknis diselesaikan dan di
 - **Gejala:** Saat lapisan diputar, bagian belakang stiker cubie lain terlihat karena cubie hanya memiliki 3 pelat stiker luar.
 - **Penyebab:** Sisi bagian dalam cubie kosong (bolong).
 - **Solusi:** Ditambahkan 3 pelat inti hitam (`.cubie-core`) pada sisi-sisi internal setiap cubie sehingga lapisan tampak padat dan pekat layaknya kubus fisik asli.
+
+### 6. Masalah Kedip Warna (*Color Flicker*) Saat Transisi Langkah
+
+- **Gejala:** Warna stiker tampak berkedip sesaat setiap kali animasi putaran lapisan selesai.
+- **Penyebab:** Elemen `.cubie-face` memiliki `transition: background-color 0.15s` yang membuat warna lama memudar ke warna baru selama 150 ms setelah transformasi direset, diperparah oleh *reparenting DOM* pada elemen pivot sementara.
+- **Solusi:** Menghapus transisi `background-color` pada `.cubie-face` di `static/css/style.css` dan mengganti animasi putaran menjadi transformasi *in-place* tanpa reparenting DOM di `static/js/cube.js`, sehingga reset transform dan pembaruan warna terjadi pada frame yang sama.
+
+### 7. Masalah Koneksi Lintas Origin Frontend-Backend (CORS & `API_BASE`)
+
+- **Gejala:** Permintaan `/api/example` dan `/api/solve` gagal terhubung ke server ketika antarmuka dibuka melalui VS Code Live Server (`:5500`) atau protokol `file://`.
+- **Penyebab:** Pemanggilan `fetch` sebelumnya menggunakan path relatif murni tanpa deteksi asal host backend, sementara `app.py` belum menyertakan header CORS maupun penanganan preflight `OPTIONS`.
+- **Solusi:** Menambahkan deteksi otomatis `API_BASE` di `static/js/config.js` menuju `http://127.0.0.1:5000` serta middleware `@app.after_request` (`add_cors_headers`) dan metode `OPTIONS` pada `/api/solve` di `app.py`.
 
 ---
 
