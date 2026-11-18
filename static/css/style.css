@@ -131,22 +131,7 @@ button { font: inherit; }
   justify-content: center;
 }
 .cube-indicator-front {
-  width: 26px;
-  height: 26px;
-  color: var(--text);
-  opacity: 0.85;
-  transform: translate3d(-50%, -50%, 0) translate3d(0px, 0px, 126px);
-}
-.cube-indicator-front .arrow-plane {
-  position: absolute;
-  inset: 0;
-  backface-visibility: visible;
-}
-.cube-indicator-front .arrow-plane-xz {
-  transform: rotateX(-90deg);
-}
-.cube-indicator-front .arrow-plane-yz {
-  transform: rotateY(-90deg) rotateZ(90deg);
+  transform: translate3d(-50%, -50%, 0) translate3d(0px, 0px, 124px);
 }
 .cube-indicator-right {
   transform: translate3d(-50%, -50%, 0) translate3d(124px, 0px, 0px);
