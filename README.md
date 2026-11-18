@@ -339,24 +339,24 @@ $$
 L(\pi) = \sum_{i=0}^{n-1} c_i \times (n - 1 - i)!
 $$
 
-di mana $c_i$ adalah banyaknya elemen di sebelah kanan posisi $i$ yang memiliki nilai lebih kecil dari $\pi[i]$. Nilai ini menghasilkan indeks integer tunggal $0 \le \text{perm\_code} < 5.040$.
+di mana $c_i$ adalah banyaknya elemen di sebelah kanan posisi $i$ yang memiliki nilai lebih kecil dari $\pi[i]$. Nilai ini menghasilkan indeks integer tunggal $0 \le \text{permCode} < 5.040$.
 
 #### B. Trit-Encoding untuk Orientasi ($0 \dots 728$)
 
 Enam nilai orientasi sudut bebas ($o_0, o_1, o_2, o_3, o_4, o_5 \in \{0, 1, 2\}$) dikodekan sebagai bilangan basis-3:
 
 $$
-\text{orient\_code} = \sum_{i=0}^{5} o_i \times 3^{5-i}
+\text{orientCode} = \sum_{i=0}^{5} o_i \times 3^{5-i}
 $$
 
-Nilai ini menghasilkan bilangan bulat $0 \le \text{orient\_code} < 729$.
+Nilai ini menghasilkan bilangan bulat $0 \le \text{orientCode} < 729$.
 
 #### C. Indeks Tabel Gabungan
 
 Indeks akhir dihitung dengan menggabungkan kedua kode:
 
 $$
-\text{Index} = (\text{perm\_code} \times 729) + \text{orient\_code}
+\text{Index} = (\text{permCode} \times 729) + \text{orientCode}
 $$
 
 Dengan teknik ini, seluruh tabel BFS dapat direpresentasikan sebagai sebuah array biner sederhana bertipe *signed 8-bit integer* (`int8`):
