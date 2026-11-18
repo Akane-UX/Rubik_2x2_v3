@@ -118,6 +118,54 @@ button { font: inherit; }
 .cube-nav { transition: transform 0.38s var(--spring); }
 .cube-nav.dragging { transition: none; }
 
+/* Indikator arah sisi kubus (mengambang di luar kubus) */
+.cube-indicator {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cube-indicator-front {
+  width: 26px;
+  height: 26px;
+  color: var(--text);
+  opacity: 0.85;
+  transform: translate3d(-50%, -50%, 0) translate3d(0px, 0px, 126px);
+}
+.cube-indicator-front .arrow-plane {
+  position: absolute;
+  inset: 0;
+  backface-visibility: visible;
+}
+.cube-indicator-front .arrow-plane-xz {
+  transform: rotateX(-90deg);
+}
+.cube-indicator-front .arrow-plane-yz {
+  transform: rotateY(-90deg) rotateZ(90deg);
+}
+.cube-indicator-right {
+  transform: translate3d(-50%, -50%, 0) translate3d(124px, 0px, 0px);
+}
+.cube-indicator-left {
+  transform: translate3d(-50%, -50%, 0) translate3d(-124px, 0px, 0px);
+}
+.cube-indicator-billboard {
+  display: inline-block;
+  font-family: "Geist Mono", monospace;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  opacity: 0.85;
+  transition: transform 0.38s var(--spring);
+}
+.cube-nav.dragging .cube-indicator-billboard { transition: none; }
+
 .cubie {
   position: absolute;
   left: 50%;

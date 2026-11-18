@@ -11,6 +11,10 @@ function normDeg(d) {
 
 function applyCamera() {
   cubeNavEl.style.transform = `rotateX(${camera.x}deg) rotateY(${camera.y}deg)`;
+  const billboardTransform = `rotateY(${-camera.y}deg) rotateX(${-camera.x}deg)`;
+  document.querySelectorAll(".cube-indicator-billboard").forEach(el => {
+    el.style.transform = billboardTransform;
+  });
   const readout = document.getElementById("angle-readout");
   if (readout) readout.textContent = `X: ${normDeg(camera.x)}° · Y: ${normDeg(camera.y)}°`;
 }
