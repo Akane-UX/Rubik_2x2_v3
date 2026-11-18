@@ -4,7 +4,7 @@ import random
 
 from flask import Flask, jsonify, render_template, request
 
-from cube_model import CORNER_NAMES, DEFAULT_FACE_COLORS, SOLVED_STATE
+from cube_model import SOLVED_STATE
 from color_mapping import ColorMappingError, colors_to_solution, state_to_colors, apply_rotation, ROTATIONS
 from movements import ALL_MOVES, apply_moves
 

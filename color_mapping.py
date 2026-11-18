@@ -1,6 +1,6 @@
 """Konversi input warna pengguna ke CubeState kanonik dan orkestrasi pipeline solusi."""
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 from cube_model import (
     CORNER_FACES,
@@ -136,8 +136,8 @@ def raw_state_from_colors(
     validate_raw_input(corners, color_scheme)
     canon = _canonical_orders(color_scheme)
 
-    perm: List[Optional[int]] = [None] * 8
-    orient: List[Optional[int]] = [None] * 8
+    perm: List[int] = [0] * 8
+    orient: List[int] = [0] * 8
     for slot, colors in corners.items():
         cid, o = _identify_corner(colors, canon)
         perm[slot] = cid
@@ -218,8 +218,8 @@ ROTATION_GENERATOR = {"x": _rot_x, "y": _rot_y}
 
 def apply_rotation(state: CubeState, rot_fn) -> CubeState:
     """Terapkan satu rotasi bodi kubus utuh pada state."""
-    new_perm: List[Optional[int]] = [None] * 8
-    new_orient: List[Optional[int]] = [None] * 8
+    new_perm: List[int] = [0] * 8
+    new_orient: List[int] = [0] * 8
 
     for old_slot in range(8):
         new_slot = COORD_TO_SLOT[rot_fn(CORNER_COORD[old_slot])]
@@ -286,7 +286,7 @@ def colors_to_solution(
             "states": _states_to_json_colors([raw_state], color_scheme),
         }
 
-    canonical_state, orig_slot, orig_orient, rotation_path = canonicalize(raw_state)
+    canonical_state, _, _, rotation_path = canonicalize(raw_state)
     moves = bfs_solve(canonical_state)
 
     # Langkah reorientasi seluruh kubus jika diperlukan
