@@ -1,6 +1,6 @@
 """Konversi input warna pengguna ke CubeState kanonik dan orkestrasi pipeline solusi."""
 
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from cube_model import (
     CORNER_FACES,
@@ -109,7 +109,10 @@ def validate_raw_input(
 
 def _canonical_orders(color_scheme: Dict[str, str]) -> Dict[int, Tuple[str, str, str]]:
     """Daftar urutan kanonik warna stiker tiap corner."""
-    return {i: tuple(color_scheme[f] for f in CORNER_FACES[i]) for i in range(8)}
+    return {
+        i: (color_scheme[f0], color_scheme[f1], color_scheme[f2])
+        for i, (f0, f1, f2) in CORNER_FACES.items()
+    }
 
 
 def _identify_corner(
@@ -272,7 +275,7 @@ def _states_to_json_colors(states: List[CubeState], color_scheme) -> List[Dict[s
 def colors_to_solution(
     corners: Dict[int, Tuple[str, str, str]],
     color_scheme: Dict[str, str] = DEFAULT_FACE_COLORS,
-) -> Dict[str, object]:
+) -> Dict[str, Any]:
     """Pipeline terpadu: validasi, normalisasi kanonik, pencarian solusi BFS, dan pembuatan frame animasi."""
     raw_state = raw_state_from_colors(corners, color_scheme)
 
