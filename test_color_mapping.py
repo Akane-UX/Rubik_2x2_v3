@@ -177,7 +177,7 @@ class TestEndToEndPipeline(unittest.TestCase):
 
             canonical, _, _, _ = cm.canonicalize(held)
             final = (
-                apply_moves(canonical, result["moves_str"])
+                apply_moves(canonical, str(result["moves_str"]))
                 if result["moves"] else canonical
             )
             self.assertTrue(final.is_solved(), msg=f"scramble={seq} sol={result['moves']}")
