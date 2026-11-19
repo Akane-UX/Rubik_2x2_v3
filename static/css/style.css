@@ -139,6 +139,9 @@ button { font: inherit; }
 .cube-indicator-left {
   transform: translate3d(-50%, -50%, 0) translate3d(-124px, 0px, 0px);
 }
+.cube-indicator-up {
+  transform: translate3d(-50%, -50%, 0) translate3d(0px, -124px, 0px);
+}
 .cube-indicator-billboard {
   display: inline-block;
   font-family: "Geist Mono", monospace;
@@ -146,7 +149,8 @@ button { font: inherit; }
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--text);
-  opacity: 0.85;
+  opacity: 0.9;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.95);
   transition: transform 0.38s var(--spring);
 }
 .cube-nav.dragging .cube-indicator-billboard { transition: none; }
